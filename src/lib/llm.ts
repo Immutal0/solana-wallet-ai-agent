@@ -4,7 +4,7 @@ import { SYSTEM_PROMPT } from "@/utils/config";
 import OpenAI from "openai";
 import { Message } from "../utils/types";
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
+  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY!,
   dangerouslyAllowBrowser: true,
 });
 
@@ -12,7 +12,7 @@ export async function GPTResponse(chatHistory: Message[]) {
   chatHistory = [{ role: "system", content: SYSTEM_PROMPT }, ...chatHistory];
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-4",
     messages: chatHistory,
     function_call: { name: "get_action_data" },
     functions: [

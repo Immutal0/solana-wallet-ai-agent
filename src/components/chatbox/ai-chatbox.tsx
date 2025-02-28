@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import AIResponse from "@/lib/ai-response";
 import { Message } from "@/utils/types";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bot, Send, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -15,6 +15,7 @@ import remarkGfm from "remark-gfm";
 export function AIChat() {
   const messageRef = useRef<HTMLDivElement>(null);
   const { publicKey, sendTransaction } = useWallet();
+  const { connection } = useConnection();
   // Todo: we can store this to local storage (not db because it will be too much for an example)
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -75,6 +76,7 @@ export function AIChat() {
       chatHistory,
       publicKey,
       sendTransaction,
+      connection
     );
     const aiMessage: Message = {
       id: messages.length + 2,

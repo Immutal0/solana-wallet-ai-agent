@@ -1,3 +1,5 @@
+"use client"
+
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { getLastXTransactions } from "../utils/helper";
 
@@ -5,9 +7,9 @@ import { SolanaAgentKit } from "solana-agent-kit";
 
 const initializeSolanaAgent = () => {
   const agent = new SolanaAgentKit(
-    process.env.SOLANA_PRIVATE_KEY!,
-    process.env.SOLANA_RPC_URL!,
-    process.env.OPENAI_API_KEY!,
+    process.env.NEXT_PUBLIC_SOLANA_PRIVATE_KEY!,
+    process.env.NEXT_PUBLIC_SOLANA_RPC_URL!,
+    process.env.NEXT_PUBLIC_OPENAI_API_KEY!,
   );
   return agent;
 };
@@ -178,11 +180,14 @@ const handleCreateTokenCommand = async (data: CommandProps) => {
       parseInt(tokenDecimals),
       parseInt(mintAmount),
     );
+
+    console.log("mintPublicKey", mintPublicKey);
+
     return {
       message:
         "**Token created successfully.** \
         Check on [Link](https://solscan.io/address/" +
-        mintPublicKey.toString() +
+        mintPublicKey.mint.toString() +
         "?cluster=devnet)" +
         "\n\n" +
         "**Total Supply:** " +
@@ -213,9 +218,11 @@ const handleCheckBalanceCommand = async (publicKey: PublicKey) => {
     };
   }
   const agent = initializeSolanaAgent();
-  const balance = await agent.getBalance(publicKey);
+
+  const balance = await agent.getBalance();
+
   return {
-    message: `Your balance is ${(balance / LAMPORTS_PER_SOL).toFixed(4)} SOL.`,
+    message: `Your balance is ${balance.toFixed(4)} SOL.`,
     status: "success",
   };
 };
