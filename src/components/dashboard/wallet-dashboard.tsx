@@ -26,9 +26,11 @@ export function WalletDashboard() {
   const [transactions, setTransactions] = useState<any[]>([]);
   const { publicKey } = useWallet();
   const { connection } = useConnection();
+
   const getUserSOLBalance = async () => {
     if (!publicKey) return;
     let balance = await getBalance(publicKey.toString(), connection);
+    console.log("here");
     let transactions = await getLastXTransactions(
       publicKey.toString(),
       connection,
@@ -41,7 +43,7 @@ export function WalletDashboard() {
 
   useEffect(() => {
     getUserSOLBalance();
-  }, [publicKey, transactions]);
+  }, [publicKey]);
 
   return (
     <motion.div

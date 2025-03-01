@@ -12,7 +12,7 @@ export async function GPTResponse(chatHistory: Message[]) {
   chatHistory = [{ role: "system", content: SYSTEM_PROMPT }, ...chatHistory];
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4",
+    model: "gpt-4o-mini",
     messages: chatHistory,
     function_call: { name: "get_action_data" },
     functions: [
