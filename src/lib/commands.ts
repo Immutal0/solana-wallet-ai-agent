@@ -48,7 +48,7 @@ export default async function triggerCommand(
       response = await handleCheckBalanceCommand(publicKey);
       return response;
     case "get_address":
-      response = await handleGetAddressCommand(publicKey);
+      response = await handleGetAddressCommand();
       return response;
     case "transaction_status":
       response = await handleTransactionStatusCommand(publicKey, connection);
@@ -82,11 +82,12 @@ const handleSendCommand = async (data: CommandProps) => {
   }
   try {
     const agent = initializeSolanaAgent();
-    console.log("agent", agent);
+
     const signature = await agent.transfer(
       new PublicKey(toPublicKey),
       parsedAmount,
     );
+    console.log(signature);
     if (signature) {
       return {
         message:
@@ -226,15 +227,11 @@ const handleCheckBalanceCommand = async (publicKey: PublicKey) => {
     status: "success",
   };
 };
-const handleGetAddressCommand = async (publicKey: PublicKey) => {
-  if (!publicKey) {
-    return {
-      message: "Please connect your wallet.",
-      status: "error",
-    };
-  }
+const handleGetAddressCommand = async () => {
+  const agent = initializeSolanaAgent();
+
   return {
-    message: `Your address is ${publicKey.toString()}.`,
+    message: `Your address is ${agent.wallet.publicKey.toString()}.`,
     status: "success",
   };
 };
@@ -268,8 +265,9 @@ const handleRecentTransactionCommand = async (
       status: "error",
     };
   }
+  const agent = initializeSolanaAgent();
   const transactions = await getLastXTransactions(
-    publicKey.toString(),
+    agent.wallet.publicKey.toString(),
     connection,
     5,
   );
@@ -281,7 +279,7 @@ const handleRecentTransactionCommand = async (
         .map(
           (transaction) =>
             "| [" +
-            transaction.confirmationStatus +
+            transaction.signature.substring(0, 8) +
             "](https://solscan.io/tx/" +
             transaction.signature +
             "?cluster=devnet) |",
